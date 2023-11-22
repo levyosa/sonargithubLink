@@ -33,7 +33,7 @@ jobs:
       run: sleep 3
     - name: Check Quality Gate
       run: |
-        QUALITY_GATE_STATUS=$(curl -s "https://sonarcloud.io/api/qualitygates/project_status?projectKey=testland_sonargithublink&pullRequest=${{ github.event.pull_request.number }}" -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}"')
+        QUALITY_GATE_STATUS=$(curl -s "https://sonarcloud.io/api/qualitygates/project_status?projectKey=testland_sonargithublink&pullRequest=${{ github.event.pull_request.number }}" -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}")
         
         echo $QUALITY_GATE_STATUS
         
