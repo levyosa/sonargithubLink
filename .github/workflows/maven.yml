@@ -29,14 +29,18 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    - name: Wait for sonarcloud to analyze, calm down
+      run: sleep 3
     - name: Check Quality Gate
       run: |
+        QUALITY_GATE_STATUS=$(curl -s "https://sonarcloud.io/api/qualitygates/project_status?projectKey=testland_sonargithublink&pullRequest=${{ github.event.pull_request.number }}" -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}"')
         
-        QUALITY_GATE_STATUS=$(curl -s "https://sonarcloud.io/api/qualitygates/project_status?projectKey=testland_sonargithublink&pullRequest=${{ github.event.pull_request.number }}" -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}" | jq -r '.projectStatus.status')
+        echo $QUALITY_GATE_STATUS
+        
+        QUALITY_GATE_STATUS=$(echo $QUALITY_GATE_STATUS | jq -r '.projectStatus.status')
         
         if [[ "$QUALITY_GATE_STATUS" != "OK" ]]; then
-          echo "Quality gate check failed!"
-          echo $QUALITY_GATE_STATUS
+          echo "Quality gate check not passed!"
           exit 1
         else
           echo "Quality gate check passed!"
