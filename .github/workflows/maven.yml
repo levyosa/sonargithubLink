@@ -15,13 +15,6 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Show cute message
-      run: echo "Have a nice day!"
-
-
   sonar:
     runs-on: ubuntu-latest
     steps:
@@ -36,11 +29,20 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-    - name: Check Quality Gate Pass
-      uses: sonarsource/sonarqube-quality-gate-action@master
-      timeout-minutes: 2
-
+    - name: Check Quality Gate
+      run: |
+        # sudo apt-get update
+        # sudo apt-get install jq
+        
+        QUALITY_GATE_STATUS=$(curl -s "https://sonarcloud.io/api/qualitygates/project_status?projectKey=testland_sonargithublink" -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}" | jq -r '.projectStatus.status')
+        
+        if [[ "$QUALITY_GATE_STATUS" != "OK" ]]; then
+          echo "Quality gate check failed!"
+          echo $QUALITY_GATE_STATUS
+          exit 1
+        else
+          echo "Quality gate check passed!"
+        fi
       env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONARCLOUD_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
