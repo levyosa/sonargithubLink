@@ -31,7 +31,10 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     - name: Check Quality Gate
       run: |
-       
+      
+        PLAIN_SONAR_TOKEN=$(echo $SONAR_TOKEN | sed -e 's/\r//g')
+        echo $PLAIN_SONAR_TOKEN
+        
         
         QUALITY_GATE_STATUS=$(curl -s "https://sonarcloud.io/api/qualitygates/project_status?projectKey=testland_sonargithublink" -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}" | jq -r '.projectStatus.status')
         
