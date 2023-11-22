@@ -35,7 +35,7 @@ jobs:
       run: |
         QUALITY_GATE_STATUS=$(curl -s "https://sonarcloud.io/api/qualitygates/project_status?projectKey=testland_sonargithublink&pullRequest=${{ github.event.pull_request.number }}" -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}")
         
-        echo $QUALITY_GATE_STATUS | jq .[]
+        echo $QUALITY_GATE_STATUS | jq
         
         QUALITY_GATE_STATUS=$(echo $QUALITY_GATE_STATUS | jq -r '.projectStatus.status')
         
